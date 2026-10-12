@@ -1,0 +1,40 @@
+name: Autograde
+on: [push, workflow_dispatch]
+
+permissions:
+  contents: read
+
+jobs:
+  grade:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      # The whole lab is the CD pipeline, so the whole grade is one question:
+      # is your service really deployed and answering on Cloud Run?
+      - name: Deployed on Cloud Run via Cloud Build (3 points)
+        run: |
+          URL=$(grep -v '^ *#' SERVICE_URL.txt 2>/dev/null | grep -Eo 'https://[^ ]+' | head -1 || true)
+          if [ -z "$URL" ]; then
+            echo "::error::SERVICE_URL.txt does not contain your service URL yet."
+            echo "Finish the Cloud Build -> Cloud Run setup in the README, deploy,"
+            echo "then paste your service URL (https://lab-cd-....run.app) into"
+            echo "SERVICE_URL.txt and push again."
+            exit 1
+          fi
+          case "$URL" in
+            https://*.run.app|https://*.run.app/*) ;;
+            *) echo "::error::$URL is not a Cloud Run URL (it must end with .run.app)."; exit 1 ;;
+          esac
+          echo "Checking ${URL%/}/concerts ..."
+          code=$(curl -s -o /tmp/body -w '%{http_code}' --max-time 30 -L "${URL%/}/concerts")
+          echo "HTTP $code"
+          head -c 300 /tmp/body; echo
+          if [ "$code" != "200" ]; then
+            echo "::error::Your Cloud Run service did not answer 200 on /concerts (got $code)."
+            echo "Open the URL in a browser and check Cloud Run logs; make sure the"
+            echo "service allows unauthenticated access and listens on port 8100."
+            exit 1
+          fi
+          echo "Deployment verified: $URL is live and serving /concerts."

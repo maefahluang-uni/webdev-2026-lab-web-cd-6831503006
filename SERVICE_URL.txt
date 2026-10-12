@@ -1,0 +1,5 @@
+# After your Cloud Build trigger has deployed the app to Cloud Run:
+# 1. open Cloud Run in the console, click your lab-cd service
+# 2. copy the service URL and REPLACE this file's content with it, e.g.
+# https://lab-cd-abc123xyz-uc.a.run.app
+# 3. commit and push - the Autograde action then checks your live service
