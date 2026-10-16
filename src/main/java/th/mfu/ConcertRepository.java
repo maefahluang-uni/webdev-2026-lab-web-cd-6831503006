@@ -6,7 +6,6 @@ import org.springframework.data.repository.CrudRepository;
 
 import th.mfu.domain.Concert;
 
-
 public interface ConcertRepository extends CrudRepository<Concert, Long> {
-    List<Concert> findAllByOrderByIdDesc();
+
 }

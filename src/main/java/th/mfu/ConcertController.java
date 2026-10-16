@@ -36,7 +36,7 @@ public class ConcertController {
     @GetMapping("/concerts")
     public String listConcerts(Model model) {
         // TODO: list all concerts
-        model.addAttribute("concerts", repository.findAllByOrderByIdDesc());
+        model.addAttribute("concerts", repository.findAll());
         // TODO: return a template to list concerts
         return "list-concert";
     }
