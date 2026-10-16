@@ -8,5 +8,5 @@ import th.mfu.domain.Concert;
 
 
 public interface ConcertRepository extends CrudRepository<Concert, Long> {
-      
+        
 }

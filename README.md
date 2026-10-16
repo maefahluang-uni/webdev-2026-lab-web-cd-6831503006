@@ -149,3 +149,5 @@ Cloud Build deploy - that is continuous deployment working as intended.
 # Challenge
 - update the view html files (by applying bootstrap) in `src/main/resources/templates` and push to github. 
 - You should see the changes in the web deployed on the cloud.
+
+some
