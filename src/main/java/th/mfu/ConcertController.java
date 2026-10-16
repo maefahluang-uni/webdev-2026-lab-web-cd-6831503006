@@ -26,12 +26,7 @@ public class ConcertController {
     @Autowired
     ConcertRepository repository;
 
-    
-    public ConcertController(ConcertRepository repository) {
-        this.repository = repository;
-    }
-
-    //TODO: add initBinder for date format
+    // TODO: add initBinder for date format
     @InitBinder
     public final void initBinderUsuariosFormValidator(final WebDataBinder binder, final Locale locale) {
         final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", locale);
@@ -41,12 +36,10 @@ public class ConcertController {
     @GetMapping("/concerts")
     public String listConcerts(Model model) {
         // TODO: list all concerts
-        model.addAttribute("concerts", repository.findAll());
+        model.addAttribute("concerts", repository.findAllByOrderByIdDesc());
         // TODO: return a template to list concerts
         return "list-concert";
     }
-
-   
 
     @GetMapping("/add-concert")
     public String addAConcertForm(Model model) {
@@ -66,14 +59,21 @@ public class ConcertController {
 
     @GetMapping("/concerts/{id}")
     public String getConcert(Model model, @PathVariable Long id) {
-        //TODO: find concert by id
+        // TODO: find concert by id
         Concert concert = repository.findById(id).get();
-        // TODO: list all concerts
+        // TODO: pass concert to form
         model.addAttribute("concert", concert);
         // TODO: return a template for concert form
-        return "add-concert-form";
+        return "edit-concert-form";
     }
 
+    @PostMapping("/concerts/{id}")
+    public String updateConcert(@PathVariable Long id, @ModelAttribute Concert concert) {
+        // Set the id so JPA performs an UPDATE instead of INSERT
+        concert.setId(id);
+        repository.save(concert);
+        return "redirect:/concerts";
+    }
 
     @GetMapping("/delete-concert/{id}")
     public String deleteConcert(@PathVariable long id) {
@@ -83,10 +83,9 @@ public class ConcertController {
         return "redirect:/concerts";
     }
 
-    
     @GetMapping("/delete-concert")
     public String removeAllConcerts() {
-        // delete all employees 
+        // delete all employees
         repository.deleteAll();
         return "redirect:/concerts";
     }
